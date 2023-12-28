@@ -9,6 +9,7 @@ import mate.academy.mainspringproject.mappers.BookMapper;
 import mate.academy.mainspringproject.model.Book;
 import mate.academy.mainspringproject.repository.BookRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -44,16 +45,14 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public BookDto updateById(Long id, CreateBookRequestDto requestDto) {
-        Book book = bookRepository.findById(id).orElseThrow(
-                () -> new EntityNotFoundException("Can't find book by id: " + id));
-        book.setId(id);
-        book.setTitle(requestDto.getTitle());
-        book.setAuthor(requestDto.getAuthor());
-        book.setIsbn(requestDto.getIsbn());
-        book.setPrice(requestDto.getPrice());
-        book.setDescription(requestDto.getDescription());
-        book.setCoverImage(requestDto.getCoverImage());
-        return bookMapper.toDto(bookRepository.save(book));
+        if (!bookRepository.existsById(id)) {
+            throw new EntityNotFoundException("Can't find book by id: " + id);
+        } else {
+            Book book = bookMapper.toModel(requestDto);
+            book.setId(id);
+            return bookMapper.toDto(bookRepository.save(book));
+        }
     }
 }
