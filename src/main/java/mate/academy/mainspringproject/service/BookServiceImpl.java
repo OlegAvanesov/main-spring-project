@@ -49,10 +49,9 @@ public class BookServiceImpl implements BookService {
     public BookDto updateById(Long id, CreateBookRequestDto requestDto) {
         if (!bookRepository.existsById(id)) {
             throw new EntityNotFoundException("Can't find book by id: " + id);
-        } else {
-            Book book = bookMapper.toModel(requestDto);
-            book.setId(id);
-            return bookMapper.toDto(bookRepository.save(book));
         }
+        Book book = bookMapper.toModel(requestDto);
+        book.setId(id);
+        return bookMapper.toDto(bookRepository.save(book));
     }
 }
