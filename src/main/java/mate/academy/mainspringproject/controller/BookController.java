@@ -11,6 +11,7 @@ import mate.academy.mainspringproject.dto.book.CreateBookRequestDto;
 import mate.academy.mainspringproject.service.bookservice.BookService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,6 +43,7 @@ public class BookController {
     }
 
     @Operation(summary = "Create a new book", description = "Create a new book")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public BookDto createBook(@RequestBody @Valid CreateBookRequestDto requestDto) {
         return bookService.save(requestDto);
@@ -49,6 +51,7 @@ public class BookController {
 
     @Operation(summary = "Update book",
             description = "Update information about available book by it's id")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/{id}")
     public BookDto updateBook(@PathVariable Long id,
             @RequestBody @Valid CreateBookRequestDto requestDto) {
@@ -57,6 +60,7 @@ public class BookController {
 
     @Operation(summary = "Delete book", description = "Delete available book by it's id")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{id}")
     public void deleteBook(@PathVariable Long id) {
         bookService.deleteById(id);
