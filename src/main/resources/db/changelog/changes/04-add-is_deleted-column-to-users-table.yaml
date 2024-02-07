@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: add-is_deleted-and-roles-columns-to-users
+      id: add-is_deleted-column-to-users
       author: oleh_avanesov
       changes:
         - addColumn:
@@ -10,6 +10,3 @@ databaseChangeLog:
                   name: is_deleted
                   type: boolean
                   defaultValue: false
-              - column:
-                  name: roles
-                  type: varchar(255)

@@ -8,7 +8,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 20
+                  value: 1
               - column:
                   name: email
                   value: bob@example.com
@@ -27,9 +27,7 @@ databaseChangeLog:
               - column:
                   name: is_deleted
                   value: 0
-              - column:
-                  name: roles
-                  value: ROLE_USER
+
 
   - changeSet:
       id: 2
@@ -40,7 +38,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 21
+                  value: 2
               - column:
                   name: email
                   value: alice@example.com
@@ -59,9 +57,6 @@ databaseChangeLog:
               - column:
                   name: is_deleted
                   value: 0
-              - column:
-                  name: roles
-                  value: ROLE_USER
 
 
   - changeSet:
@@ -73,7 +68,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  value: 22
+                  value: 3
               - column:
                   name: email
                   value: john@example.com
@@ -92,6 +87,3 @@ databaseChangeLog:
               - column:
                   name: is_deleted
                   value: 0
-              - column:
-                  name: roles
-                  value: ROLE_ADMIN

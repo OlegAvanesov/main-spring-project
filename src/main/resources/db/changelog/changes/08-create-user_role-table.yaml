@@ -3,11 +3,6 @@ databaseChangeLog:
       id: create-user_role-table
       author: oleh_avanesov
       changes:
-        - preConditions:
-            onFail: MARK_RAN
-            not:
-              tableExists:
-                tableName: user_role
         - createTable:
             tableName: user_role
             columns:
