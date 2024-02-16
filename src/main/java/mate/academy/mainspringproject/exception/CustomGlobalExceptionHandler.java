@@ -1,8 +1,6 @@
 package mate.academy.mainspringproject.exception;
 
-import io.jsonwebtoken.JwtException;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,7 +12,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -44,18 +41,5 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
             return field + " " + defaultMessage;
         }
         return defaultMessage;
-    }
-
-    @ExceptionHandler(JwtException.class)
-    protected ResponseEntity<Object> handleJwtException(
-            JwtException ex,
-            HttpHeaders headers,
-            WebRequest request
-    ) {
-        Map<String, Object> body = new LinkedHashMap<>();
-        body.put("timestamp", LocalDateTime.now());
-        body.put("status", HttpStatus.UNAUTHORIZED);
-        body.put("errors", Collections.singletonList(ex.getMessage()));
-        return new ResponseEntity<>(body, headers, HttpStatus.UNAUTHORIZED);
     }
 }
