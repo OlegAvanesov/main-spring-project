@@ -1,4 +1,4 @@
-package mate.academy.mainspringproject.service.userservice;
+package mate.academy.mainspringproject.service.user;
 
 import lombok.RequiredArgsConstructor;
 import mate.academy.mainspringproject.dto.user.UserRegistrationRequestDto;

@@ -8,7 +8,6 @@ import lombok.Data;
 @Data
 public class UserLoginRequestDto {
     @NotEmpty
-    @Size(min = 8, max = 20)
     @Email
     private String email;
     @NotEmpty

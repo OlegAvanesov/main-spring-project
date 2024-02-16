@@ -1,12 +1,11 @@
 package mate.academy.mainspringproject.dto.book;
 
 import jakarta.persistence.Column;
-import java.math.BigDecimal;
-import java.util.Set;
 import lombok.Data;
 
+import java.math.BigDecimal;
 @Data
-public class BookDto {
+public class BookDtoWithoutCategoryIds {
     private Long id;
     @Column(nullable = false)
     private String title;
@@ -18,5 +17,4 @@ public class BookDto {
     private BigDecimal price;
     private String description;
     private String coverImage;
-    private Set<Long> categoryIds;
 }

@@ -1,4 +1,4 @@
-package mate.academy.mainspringproject.service.userservice;
+package mate.academy.mainspringproject.service.user;
 
 import mate.academy.mainspringproject.dto.user.UserRegistrationRequestDto;
 import mate.academy.mainspringproject.dto.user.UserResponseDto;

@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    @Query("FROM User u WHERE u.email LIKE :email")
+    @Query("FROM User u WHERE u.email=:email")
     Optional<User> findByEmail(String email);
 }
