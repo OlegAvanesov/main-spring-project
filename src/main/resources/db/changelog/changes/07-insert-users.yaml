@@ -87,4 +87,3 @@ databaseChangeLog:
               - column:
                   name: is_deleted
                   value: 0
-  #3 users added

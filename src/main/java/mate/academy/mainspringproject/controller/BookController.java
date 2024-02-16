@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(value = "/api/books")
 public class BookController {
-
     private final BookService bookService;
 
     @Operation(summary = "Get all books", description = "Get a list of all available books")

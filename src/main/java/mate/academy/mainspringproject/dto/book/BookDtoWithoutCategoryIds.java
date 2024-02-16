@@ -1,9 +1,9 @@
 package mate.academy.mainspringproject.dto.book;
 
 import jakarta.persistence.Column;
+import java.math.BigDecimal;
 import lombok.Data;
 
-import java.math.BigDecimal;
 @Data
 public class BookDtoWithoutCategoryIds {
     private Long id;

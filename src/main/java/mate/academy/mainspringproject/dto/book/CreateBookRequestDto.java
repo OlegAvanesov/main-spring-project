@@ -7,7 +7,6 @@ import jakarta.validation.constraints.Pattern;
 import java.math.BigDecimal;
 import java.util.Set;
 import lombok.Data;
-import mate.academy.mainspringproject.model.Category;
 
 @Data
 public class CreateBookRequestDto {
@@ -23,5 +22,6 @@ public class CreateBookRequestDto {
     private BigDecimal price;
     private String description;
     private String coverImage;
-    private Set<Category> categories;
+    @NotNull
+    private Set<Long> categoryIds;
 }

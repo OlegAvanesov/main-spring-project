@@ -1,5 +1,6 @@
 package mate.academy.mainspringproject.service.user;
 
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import mate.academy.mainspringproject.dto.user.UserRegistrationRequestDto;
 import mate.academy.mainspringproject.dto.user.UserResponseDto;
@@ -12,8 +13,6 @@ import mate.academy.mainspringproject.repository.user.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
-
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -22,18 +21,24 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 
-
     @Override
     public UserResponseDto save(UserRegistrationRequestDto requestDto) {
         User userForRegistration = userMapper.toModel(requestDto);
+
         String encodedPassword = passwordEncoder.encode(userForRegistration.getPassword());
         userForRegistration.setPassword(encodedPassword);
-        Role role = roleRepository.findAll().stream()
-                .filter(r -> r.getName().equals(Role.RoleName.ROLE_USER))
-                .findFirst().orElseThrow(
-                        () -> new EntityNotFoundException("Can't find role in DB")
-                );
+
+        Role role = getRoleByName(Role.RoleName.ROLE_USER);
         userForRegistration.setRoles(Set.of(role));
+
         return userMapper.toDto(userRepository.save(userForRegistration));
+    }
+
+    private Role getRoleByName(Role.RoleName roleName) {
+        return roleRepository.findAll().stream()
+                .filter(role -> role.getName().equals(roleName))
+                .findFirst().orElseThrow(
+                        () -> new EntityNotFoundException("Can't find role " + roleName + " in DB")
+                );
     }
 }
