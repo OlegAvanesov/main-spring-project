@@ -14,7 +14,7 @@ databaseChangeLog:
                   value: bob@example.com
               - column:
                   name: password
-                  value: "$2a$12$sD0TdJA7QCPWt4UC2qBN8uTe8qftclSa5Aphzy3HQEXUIG6BUsABG"
+                  value: "$2a$12$sD0TdJA7QCPWt4UC2qBN8uTe8qftclSa5Aphzy3HQEXUIG6BUsABG"    #1234
               - column:
                   name: first_name
                   value: Bob
@@ -44,7 +44,7 @@ databaseChangeLog:
                   value: alice@example.com
               - column:
                   name: password
-                  value: "$2a$12$sD0TdJA7QCPWt4UC2qBN8uTe8qftclSa5Aphzy3HQEXUIG6BUsABG"
+                  value: "$2a$12$sD0TdJA7QCPWt4UC2qBN8uTe8qftclSa5Aphzy3HQEXUIG6BUsABG"    #1234
               - column:
                   name: first_name
                   value: Alice
@@ -74,7 +74,7 @@ databaseChangeLog:
                   value: john@example.com
               - column:
                   name: password
-                  value: "$2a$12$sD0TdJA7QCPWt4UC2qBN8uTe8qftclSa5Aphzy3HQEXUIG6BUsABG"
+                  value: "$2a$12$sD0TdJA7QCPWt4UC2qBN8uTe8qftclSa5Aphzy3HQEXUIG6BUsABG"  #1234
               - column:
                   name: first_name
                   value: John
@@ -87,3 +87,4 @@ databaseChangeLog:
               - column:
                   name: is_deleted
                   value: 0
+  #3 users added
