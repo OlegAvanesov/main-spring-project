@@ -6,7 +6,6 @@ import mate.academy.mainspringproject.dto.category.CategoryResponseDto;
 import org.springframework.data.domain.Pageable;
 
 public interface CategoryService {
-
     List<CategoryResponseDto> findAll(Pageable pageable);
 
     CategoryResponseDto getById(Long id);

@@ -37,7 +37,8 @@ public class UserServiceImpl implements UserService {
     private Role getRoleByName(Role.RoleName roleName) {
         return roleRepository.findAll().stream()
                 .filter(role -> role.getName().equals(roleName))
-                .findFirst().orElseThrow(
+                .findFirst()
+                .orElseThrow(
                         () -> new EntityNotFoundException("Can't find role " + roleName + " in DB")
                 );
     }
