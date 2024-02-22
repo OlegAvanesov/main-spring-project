@@ -10,11 +10,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Data
 @Table(name = "cart_items")
 @SQLDelete(sql = "UPDATE cart_items SET is_deleted = TRUE WHERE id = ?")
+@SQLRestriction("is_deleted = FALSE")
 public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
