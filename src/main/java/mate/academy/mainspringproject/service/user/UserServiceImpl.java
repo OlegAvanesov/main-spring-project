@@ -34,6 +34,12 @@ public class UserServiceImpl implements UserService {
         return userMapper.toDto(userRepository.save(userForRegistration));
     }
 
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> new EntityNotFoundException("Can't find user by this email: " + email));
+    }
+
     private Role getRoleByName(Role.RoleName roleName) {
         return roleRepository.findAll().stream()
                 .filter(role -> role.getName().equals(roleName))

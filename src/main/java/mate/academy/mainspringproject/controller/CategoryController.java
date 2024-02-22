@@ -1,5 +1,7 @@
 package mate.academy.mainspringproject.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -20,30 +22,38 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/categories")
+@RequestMapping(value = "/api/categories")
 @RequiredArgsConstructor
+@Tag(name = "Category management", description = "Endpoints for managing categories")
 public class CategoryController {
     private final CategoryService categoryService;
     private final BookService bookService;
 
     @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Create a new category", description = "Create a new category")
     public CategoryResponseDto createCategory(@RequestBody @Valid CategoryRequestDto requestDto) {
         return categoryService.save(requestDto);
     }
 
     @GetMapping
+    @Operation(summary = "Get all categories",
+            description = "Get a list of all available categories"
+    )
     public List<CategoryResponseDto> getAll(Pageable pageable) {
         return categoryService.findAll(pageable);
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Get category by id", description = "Get available category by it's id")
     public CategoryResponseDto getCategoryById(@PathVariable Long id) {
         return categoryService.getById(id);
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Update category",
+            description = "Update information about available category by it's id")
     public CategoryResponseDto updateCategory(
             @PathVariable Long id, @RequestBody @Valid CategoryRequestDto categoryDto
     ) {
@@ -52,11 +62,14 @@ public class CategoryController {
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @Operation(summary = "Delete category", description = "Delete available category by it's id")
     public void deleteCategory(@PathVariable Long id) {
         categoryService.deleteById(id);
     }
 
     @GetMapping("/{id}/books")
+    @Operation(summary = "Get books by category",
+            description = "Get available books by category ID")
     public List<BookDtoWithoutCategoryIds> getBooksByCategoryId(
             @PathVariable Long id, Pageable pageable
     ) {
