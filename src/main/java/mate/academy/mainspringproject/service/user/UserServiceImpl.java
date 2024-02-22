@@ -12,6 +12,7 @@ import mate.academy.mainspringproject.repository.role.RoleRepository;
 import mate.academy.mainspringproject.repository.user.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +23,7 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     @Override
+    @Transactional
     public UserResponseDto save(UserRegistrationRequestDto requestDto) {
         User userForRegistration = userMapper.toModel(requestDto);
 

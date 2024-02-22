@@ -2,6 +2,7 @@ package mate.academy.mainspringproject.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import mate.academy.mainspringproject.dto.cartitem.CartItemRequestDto;
 import mate.academy.mainspringproject.dto.cartitem.CartItemResponseDto;
@@ -49,7 +50,8 @@ public class ShoppingCartController {
     @Operation(summary = "Change number of books",
             description = "Change the number of a specific book in the shopping cart")
     public CartItemResponseDto changeNumberOfBooks(
-            @RequestBody CartItemUpdateRequestDto requestDto, @PathVariable("cartItemId") Long id
+            @RequestBody @Valid CartItemUpdateRequestDto requestDto,
+            @PathVariable("cartItemId") Long id
     ) {
         return shoppingCartService.updateBooksQuantity(requestDto, id);
     }

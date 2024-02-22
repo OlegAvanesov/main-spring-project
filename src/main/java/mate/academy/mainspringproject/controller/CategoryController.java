@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/api/categories")
+@RequestMapping("/api/categories")
 @RequiredArgsConstructor
 @Tag(name = "Category management", description = "Endpoints for managing categories")
 public class CategoryController {

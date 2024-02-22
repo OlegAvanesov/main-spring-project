@@ -10,6 +10,7 @@ import mate.academy.mainspringproject.model.Category;
 import mate.academy.mainspringproject.repository.category.CategoryRepository;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,12 +34,14 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public CategoryResponseDto save(CategoryRequestDto categoryDto) {
         Category category = categoryMapper.toEntity(categoryDto);
         return categoryMapper.toDto(categoryRepository.save(category));
     }
 
     @Override
+    @Transactional
     public CategoryResponseDto update(Long id, CategoryRequestDto categoryDto) {
         if (!categoryRepository.existsById(id)) {
             throw new EntityNotFoundException("Can't find category by id " + id);
@@ -49,6 +52,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteById(Long id) {
         categoryRepository.deleteById(id);
     }

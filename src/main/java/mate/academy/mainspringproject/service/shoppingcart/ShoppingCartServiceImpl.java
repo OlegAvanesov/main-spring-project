@@ -15,6 +15,7 @@ import mate.academy.mainspringproject.service.cartitem.CartItemService;
 import mate.academy.mainspringproject.service.user.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,6 +38,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
+    @Transactional
     public CartItemResponseDto addBookToCart(
             CartItemRequestDto requestDto, Authentication authentication
     ) {
@@ -52,11 +54,13 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
+    @Transactional
     public CartItemResponseDto updateBooksQuantity(CartItemUpdateRequestDto requestDto, Long id) {
         return cartItemService.update(requestDto,id);
     }
 
     @Override
+    @Transactional
     public void deleteCartItem(Long id, Authentication authentication) {
         User user = userService.findByEmail((String) authentication.getPrincipal());
         ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(user.getId());
@@ -69,8 +73,9 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             ShoppingCartResponseDto shoppingCartResponseDto, CartItem cartItem
     ) {
         CartItemResponseDto cartItemResponseDto = shoppingCartResponseDto.getCartItems().stream()
-                .filter(s -> s.getId().equals(cartItem.getId()))
-                .findFirst().orElseThrow(() -> new EntityNotFoundException(
+                .filter(cartItemDto -> cartItemDto.getId().equals(cartItem.getId()))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException(
                         "Can't find cartItemResponseDto with id: " + cartItem.getId())
                 );
 

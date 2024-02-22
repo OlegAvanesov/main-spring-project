@@ -13,6 +13,7 @@ import mate.academy.mainspringproject.repository.book.BookRepository;
 import mate.academy.mainspringproject.repository.cartitem.CartItemRepository;
 import mate.academy.mainspringproject.repository.shoppingcart.ShoppingCartRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +24,7 @@ public class CartItemServiceImpl implements CartItemService {
     private final ShoppingCartRepository shoppingCartRepository;
 
     @Override
+    @Transactional
     public CartItemResponseDto save(CartItemRequestDto requestDto, ShoppingCart shoppingCart) {
         CartItem cartItem = cartItemMapper.toEntity(requestDto);
         Book book = bookRepository.findById(requestDto.getBookId()).orElseThrow(
@@ -42,6 +44,7 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
+    @Transactional
     public CartItemResponseDto update(CartItemUpdateRequestDto requestDto, Long id) {
         CartItem cartItem = cartItemRepository.findById(id).orElseThrow(
                 () -> new EntityNotFoundException("Can't find cartItem by this id: " + id)
@@ -55,6 +58,7 @@ public class CartItemServiceImpl implements CartItemService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         cartItemRepository.deleteById(id);
     }
