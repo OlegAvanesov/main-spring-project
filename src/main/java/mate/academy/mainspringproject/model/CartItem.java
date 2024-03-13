@@ -8,12 +8,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity
-@Data
+@Setter
+@Getter
 @Table(name = "cart_items")
 @SQLDelete(sql = "UPDATE cart_items SET is_deleted = TRUE WHERE id = ?")
 @SQLRestriction("is_deleted = FALSE")
@@ -21,7 +23,7 @@ public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @JoinColumn(name = "shopping_cart", nullable = false)
+    @JoinColumn(nullable = false)
     @ManyToOne
     private ShoppingCart shoppingCart;
     @JoinColumn(nullable = false)
@@ -29,6 +31,5 @@ public class CartItem {
     private Book book;
     @Column(nullable = false)
     private int quantity;
-    @Column(name = "is_deleted")
     private boolean isDeleted;
 }

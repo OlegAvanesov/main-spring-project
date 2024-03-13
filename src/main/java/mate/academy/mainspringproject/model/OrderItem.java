@@ -9,12 +9,14 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.math.BigDecimal;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity
-@Data
+@Setter
+@Getter
 @Table(name = "order_items")
 @SQLDelete(sql = "UPDATE orders_items SET is_deleted = TRUE WHERE id = ?")
 @SQLRestriction("is_deleted = FALSE")
@@ -23,15 +25,15 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false)
+    @JoinColumn(nullable = false)
     private Order order;
     @ManyToOne
-    @JoinColumn(name = "book_id", nullable = false)
+    @JoinColumn(nullable = false)
     private Book book;
     @Column(nullable = false)
     private int quantity;
     @Column(nullable = false)
     private BigDecimal price;
-    @Column(name = "is_deleted")
+    @Column(nullable = false)
     private boolean isDeleted;
 }
