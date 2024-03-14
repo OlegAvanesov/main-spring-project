@@ -9,4 +9,6 @@ public interface UserService {
     UserResponseDto save(UserRegistrationRequestDto requestDto);
 
     User findByEmail(String email);
+
+    User findById(Long id);
 }

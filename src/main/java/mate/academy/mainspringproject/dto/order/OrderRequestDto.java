@@ -1,10 +1,10 @@
 package mate.academy.mainspringproject.dto.order;
 
-import jakarta.validation.constraints.NotNull;
+import javax.validation.constraints.NotEmpty;
 import lombok.Data;
 
 @Data
 public class OrderRequestDto {
-    @NotNull
+    @NotEmpty
     private String shippingAddress;
 }

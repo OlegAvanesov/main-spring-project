@@ -2,9 +2,7 @@ package mate.academy.mainspringproject.service.order;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import mate.academy.mainspringproject.dto.order.OrderRequestDto;
 import mate.academy.mainspringproject.dto.order.OrderResponseDto;
@@ -24,6 +22,7 @@ import mate.academy.mainspringproject.service.user.UserService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -36,13 +35,14 @@ public class OrderServiceImpl implements OrderService {
     private final OrderItemMapper orderItemMapper;
 
     @Override
+    @Transactional
     public OrderResponseDto save(OrderRequestDto requestDto, Authentication authentication) {
         Order order = orderMapper.toModel(requestDto);
         orderRepository.save(order);
 
         User user = userService.findByEmail((String) authentication.getPrincipal());
         ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(user.getId());
-        setOrderFields(requestDto, authentication, order, shoppingCart);
+        updateOrder(order, requestDto, shoppingCart);
         orderRepository.save(order);
 
         shoppingCartRepository.delete(shoppingCart);
@@ -64,38 +64,28 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderItemResponseDto> findAllOrderItemsFromOrder(Long id) {
         Order order = findOrderById(id);
-        Set<OrderItem> orderItems = order.getOrderItems();
-        return orderItems.stream()
+        return order.getOrderItems().stream()
                 .map(orderItemMapper::toDto)
                 .toList();
     }
 
     @Override
     public OrderItemResponseDto findSpecificOrderItemInOrder(Long orderId, Long itemId) {
-        Order order = findOrderById(orderId);
-        OrderItem specificOrderItem = order.getOrderItems().stream()
-                .filter(orderItem -> orderItem.getId().equals(itemId))
-                .findFirst().orElseThrow(() -> new EntityNotFoundException(
-                        "Can't find OrderItem with this id: " + itemId)
-                );
+        OrderItem specificOrderItem = orderRepository.findSpecificOrderItem(orderId, itemId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        "Can't find OrderItem with this id: " + itemId
+                ));
         return orderItemMapper.toDto(specificOrderItem);
     }
 
     @Override
+    @Transactional
     public void changeOrderStatus(Long id, String status) {
-        boolean isValidStatus = Arrays.stream(Order.Status.values())
-                .anyMatch(orderStatus -> orderStatus.name().equalsIgnoreCase(status));
-        if (!isValidStatus) {
-            throw new IllegalArgumentException("Invalid order status: " + status);
-        }
         Order order = findOrderById(id);
         order.setStatus(Order.Status.valueOf(status));
     }
 
-    private void setOrderFields(
-            OrderRequestDto requestDto, Authentication authentication, Order order,
-            ShoppingCart shoppingCart
-    ) {
+    private void updateOrder(Order order, OrderRequestDto requestDto, ShoppingCart shoppingCart) {
         order.setUser(shoppingCart.getUser());
         order.setStatus(Order.Status.PENDING);
         order.setOrderDate(LocalDateTime.now());

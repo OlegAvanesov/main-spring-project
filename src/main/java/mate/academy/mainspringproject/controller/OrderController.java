@@ -65,6 +65,6 @@ public class OrderController {
     public void changeOrderStatus(
             @PathVariable Long id, @RequestBody @Valid OrderStatusRequestDto requestDto
     ) {
-        orderService.changeOrderStatus(id, requestDto.getStatus());
+        orderService.changeOrderStatus(id, requestDto.getStatus().name());
     }
 }

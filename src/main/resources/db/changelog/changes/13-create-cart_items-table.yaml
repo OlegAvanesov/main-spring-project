@@ -13,7 +13,7 @@ databaseChangeLog:
                   constraints:
                     primaryKey: true
               - column:
-                  name: shopping_cart
+                  name: shopping_cart_id
                   type: bigint
                   constraints:
                     nullable: false

@@ -42,6 +42,12 @@ public class UserServiceImpl implements UserService {
                 () -> new EntityNotFoundException("Can't find user by this email: " + email));
     }
 
+    @Override
+    public User findById(Long id) {
+        return userRepository.findById(id).orElseThrow(
+                () -> new EntityNotFoundException("Can't find user with this id: " + id));
+    }
+
     private Role getRoleByName(Role.RoleName roleName) {
         return roleRepository.findAll().stream()
                 .filter(role -> role.getName().equals(roleName))
