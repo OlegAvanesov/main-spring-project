@@ -40,8 +40,10 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderMapper.toModel(requestDto);
         orderRepository.save(order);
 
-        User user = userService.findByEmail((String) authentication.getPrincipal());
-        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(user.getId());
+        User authenticatedUser = (User) authentication.getPrincipal();
+        User userFromDb = userService.findById(authenticatedUser.getId());
+
+        ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userFromDb.getId());
         updateOrder(order, requestDto, shoppingCart);
         orderRepository.save(order);
 
@@ -54,8 +56,9 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderResponseDto> findAllUserOrders(
             Authentication authentication, Pageable pageable
     ) {
-        User user = userService.findByEmail((String) authentication.getPrincipal());
-        List<Order> allUserOrders = orderRepository.findAllByUserId(user.getId(), pageable);
+        User authenticatedUser = (User) authentication.getPrincipal();
+        User userFromDb = userService.findById(authenticatedUser.getId());
+        List<Order> allUserOrders = orderRepository.findAllByUserId(userFromDb.getId(), pageable);
         return allUserOrders.stream()
                 .map(orderMapper::toDto)
                 .toList();

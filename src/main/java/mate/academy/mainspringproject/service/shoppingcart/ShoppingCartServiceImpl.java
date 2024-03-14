@@ -27,7 +27,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
 
     @Override
     public ShoppingCartResponseDto getAllInfo(Authentication authentication) {
-        User user = userService.findByEmail((String) authentication.getPrincipal());
+        User authenticatedUser = (User) authentication.getPrincipal();
+        User user = userService.findById(authenticatedUser.getId());
         ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(user.getId());
 
         ShoppingCartResponseDto shoppingCartResponseDto = shoppingCartMapper.toDto(shoppingCart);
@@ -42,7 +43,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     public CartItemResponseDto addBookToCart(
             CartItemRequestDto requestDto, Authentication authentication
     ) {
-        User user = userService.findByEmail((String) authentication.getPrincipal());
+        User authenticatedUser = (User) authentication.getPrincipal();
+        User user = userService.findById(authenticatedUser.getId());
         ShoppingCart userShoppingCart = shoppingCartRepository.findByUserId(user.getId());
 
         if (userShoppingCart == null) {
@@ -62,7 +64,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     @Override
     @Transactional
     public void deleteCartItem(Long id, Authentication authentication) {
-        User user = userService.findByEmail((String) authentication.getPrincipal());
+        User authenticatedUser = (User) authentication.getPrincipal();
+        User user = userService.findById(authenticatedUser.getId());
         ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(user.getId());
         shoppingCart.getCartItems().removeIf(cartItem -> cartItem.getId().equals(id));
         shoppingCartRepository.save(shoppingCart);
