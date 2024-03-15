@@ -12,7 +12,7 @@ public interface OrderService {
 
     List<OrderResponseDto> findAllUserOrders(Authentication authentication, Pageable pageable);
 
-    List<OrderItemResponseDto> findAllOrderItemsFromOrder(Long id);
+    List<OrderItemResponseDto> findAllOrderItemsFromOrder(Long orderId);
 
     OrderItemResponseDto findSpecificOrderItemInOrder(Long orderId, Long itemId);
 

@@ -42,12 +42,12 @@ public class OrderServiceImpl implements OrderService {
 
         User authenticatedUser = (User) authentication.getPrincipal();
         User userFromDb = userService.findById(authenticatedUser.getId());
-
         ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userFromDb.getId());
-        updateOrder(order, requestDto, shoppingCart);
-        orderRepository.save(order);
 
-        shoppingCartRepository.delete(shoppingCart);
+        updateOrder(order, requestDto, shoppingCart);
+
+        shoppingCart.getCartItems().clear();
+        shoppingCartRepository.save(shoppingCart);
 
         return orderMapper.toDto(order);
     }
@@ -106,6 +106,7 @@ public class OrderServiceImpl implements OrderService {
         order.setTotal(total);
     }
 
+    @Transactional
     private OrderItem convertCartItemToOrderItem(CartItem cartItem, Order order) {
         OrderItem orderItem = new OrderItem();
         orderItem.setId(cartItem.getId());
