@@ -3,8 +3,10 @@ package mate.academy.mainspringproject.dto.book;
 import jakarta.persistence.Column;
 import java.math.BigDecimal;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 @Data
+@Accessors(chain = true)
 public class BookDtoWithoutCategoryIds {
     private Long id;
     @Column(nullable = false)
