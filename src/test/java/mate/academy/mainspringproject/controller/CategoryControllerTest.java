@@ -13,7 +13,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
@@ -69,7 +68,7 @@ class CategoryControllerTest {
     }
 
     @AfterEach
-    public void afterEach(){
+    public void afterEach() {
         teardown();
     }
 
