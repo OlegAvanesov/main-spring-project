@@ -30,6 +30,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
@@ -45,6 +46,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.testcontainers.shaded.org.apache.commons.lang3.builder.EqualsBuilder;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class BookControllerTest {
     protected static MockMvc mockMvc;
@@ -56,29 +58,26 @@ class BookControllerTest {
     private WebApplicationContext applicationContext;
 
     @BeforeAll
-    static void beforeAll(
-            @Autowired DataSource dataSource,
-            @Autowired WebApplicationContext applicationContext
-    ) throws SQLException {
+    public void beforeAll(){
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(applicationContext)
                 .apply(springSecurity())
                 .build();
-        teardown(dataSource);
+        teardown();
     }
 
     @BeforeEach
     public void beforeEach() {
-        addDataToDatabase(dataSource);
+        addDataToDatabase();
     }
 
     @AfterEach
-    public void afterEach() throws SQLException {
-        teardown(dataSource);
+    public void afterEach() {
+        teardown();
     }
 
     @SneakyThrows
-    static void teardown(DataSource dataSource) throws SQLException {
+    private void teardown() {
         try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(true);
             ScriptUtils.executeSqlScript(
@@ -99,7 +98,7 @@ class BookControllerTest {
     }
 
     @SneakyThrows
-    static void addDataToDatabase(DataSource dataSource) {
+    private void addDataToDatabase() {
         try (Connection connection = dataSource.getConnection()) {
             connection.setAutoCommit(true);
             ScriptUtils.executeSqlScript(
