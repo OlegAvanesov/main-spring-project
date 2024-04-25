@@ -45,7 +45,7 @@ import org.testcontainers.shaded.org.apache.commons.lang3.builder.EqualsBuilder;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CategoryControllerTest {
-    protected static MockMvc mockMvc;
+    private static MockMvc mockMvc;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
