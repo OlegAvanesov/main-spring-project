@@ -15,6 +15,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -24,6 +25,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Table(name = "shopping_carts")
 @SQLDelete(sql = "UPDATE shopping_carts SET is_deleted = TRUE WHERE id = ?")
 @SQLRestriction("is_deleted = FALSE")
+@Accessors(chain = true)
 public class ShoppingCart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
