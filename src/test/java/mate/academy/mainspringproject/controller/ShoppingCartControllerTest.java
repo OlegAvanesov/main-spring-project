@@ -28,9 +28,8 @@ import mate.academy.mainspringproject.model.ShoppingCart;
 import mate.academy.mainspringproject.model.User;
 import mate.academy.mainspringproject.service.shoppingcart.ShoppingCartService;
 import mate.academy.mainspringproject.service.user.UserService;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -65,7 +64,6 @@ class ShoppingCartControllerTest {
     private Book book;
     private CartItem cartItem;
     private ShoppingCart shoppingCart;
-//    private Authentication authentication;
 
     @BeforeAll
     public void beforeAll() {
@@ -74,15 +72,11 @@ class ShoppingCartControllerTest {
                 .apply(springSecurity())
                 .build();
         teardown();
-    }
-
-    @BeforeEach
-    public void beforeEach() {
         addDataToDatabase();
     }
 
-    @AfterEach
-    public void afterEach() {
+    @AfterAll
+    public void afterAll() {
         teardown();
     }
 
@@ -120,13 +114,22 @@ class ShoppingCartControllerTest {
                     new ClassPathResource("sql/controller/shoppingCart/before/"
                             + "6-add-cartitem-to-cart_items-table.sql")
             );
+            ScriptUtils.executeSqlScript(
+                    connection,
+                    new ClassPathResource("sql/controller/shoppingCart/before/"
+                            + "7-add-role-to-roles-table.sql")
+            );
+            ScriptUtils.executeSqlScript(
+                    connection,
+                    new ClassPathResource("sql/controller/shoppingCart/before/"
+                            + "8-add-role-to-user.sql")
+            );
         }
 
         user = createUser();
         book = createBook(createCategory());
         cartItem = createCartItem(book);
         shoppingCart = createShoppingCart(user, cartItem);
-//        authentication = mock(Authentication.class);
     }
 
     @SneakyThrows
@@ -161,7 +164,17 @@ class ShoppingCartControllerTest {
             ScriptUtils.executeSqlScript(
                     connection,
                     new ClassPathResource("sql/controller/shoppingCart/after/"
+                            + "7-delete-all-from-user_role-table.sql")
+            );
+            ScriptUtils.executeSqlScript(
+                    connection,
+                    new ClassPathResource("sql/controller/shoppingCart/after/"
                             + "6-delete-all-from-users-table.sql")
+            );
+            ScriptUtils.executeSqlScript(
+                    connection,
+                    new ClassPathResource("sql/controller/shoppingCart/after/"
+                            + "8-delete-all-from-roles-table.sql")
             );
         }
     }
@@ -169,13 +182,11 @@ class ShoppingCartControllerTest {
     @Test
     @DisplayName("Verify getAllInfoAboutCart(). "
             + "Should return all information about the shopping cart")
-//    @WithMockUser(username = "Tom", roles = {"USER"})
-    @WithUserDetails
+    @WithUserDetails("Tom@gmail.com")
     void getAllInfoAboutCart_ValidParams_Success() throws Exception {
         //Given
         ShoppingCartResponseDto expected =
                 createShoppingCartResponseDto(shoppingCart, Set.of(cartItem));
-//        when(authentication.getPrincipal()).thenReturn(user);
 
         //When
         MvcResult result = mockMvc.perform(get("/api/cart/"))
@@ -192,16 +203,17 @@ class ShoppingCartControllerTest {
 
     @Test
     @DisplayName("Verify addBookToShoppingCart(). Should add a specific book to the shopping cart")
-    @WithMockUser(username = "Tom", roles = {"USER"})
+    @WithUserDetails("Tom@gmail.com")
     void addBookToShoppingCart_ValidCartItemRequestDto_Success()
             throws Exception {
         //Given
-        shoppingCart.getCartItems().clear();
+        Book secondBook = createSecondBook(createCategory());
+        CartItem secondCartItem = createSecondCartItem(secondBook);
         CartItemRequestDto cartItemRequestDto = new CartItemRequestDto()
-                .setBookId(cartItem.getBook().getId())
-                .setQuantity(cartItem.getQuantity());
+                .setBookId(secondCartItem.getBook().getId())
+                .setQuantity(secondCartItem.getQuantity());
 
-        CartItemResponseDto expected = convertCartItemToCartItemResponseDto(cartItem);
+        CartItemResponseDto expected = convertCartItemToCartItemResponseDto(secondCartItem);
         String jsonRequest = objectMapper.writeValueAsString(cartItemRequestDto);
 
         //When
@@ -254,10 +266,10 @@ class ShoppingCartControllerTest {
     @Test
     @DisplayName("Verify deleteBookFromShoppingCart(). "
             + "Should delete a specific book from the shopping cart")
-    @WithMockUser(username = "Tom", roles = {"USER"})
+    @WithUserDetails("Tom@gmail.com")
     void deleteBookFromShoppingCart_ValidCartItemId_Success() throws Exception {
         mockMvc.perform(delete(
-                "/api/cart/cart-items/{cartItemId}", cartItem.getId())
+                        "/api/cart/cart-items/{cartItemId}", cartItem.getId())
                 )
                 .andExpect(status().isOk());
     }
@@ -291,6 +303,18 @@ class ShoppingCartControllerTest {
                 .setCategories(Set.of(category));
     }
 
+    private static Book createSecondBook(Category category) {
+        return new Book()
+                .setId(2L)
+                .setTitle("Book 2")
+                .setAuthor("Author 1")
+                .setIsbn("573-5-19-186492-2")
+                .setPrice(BigDecimal.valueOf(25))
+                .setDescription("Description for Book 2")
+                .setCoverImage("image2.jpg")
+                .setCategories(Set.of(category));
+    }
+
     private static ShoppingCart createShoppingCart(User user, CartItem cartItem) {
         Set<CartItem> cartItemSet = new HashSet<>();
         cartItemSet.add(cartItem);
@@ -304,6 +328,14 @@ class ShoppingCartControllerTest {
         int booksQuantity = 3;
         return new CartItem()
                 .setId(1L)
+                .setBook(book)
+                .setQuantity(booksQuantity);
+    }
+
+    private static CartItem createSecondCartItem(Book book) {
+        int booksQuantity = 5;
+        return new CartItem()
+                .setId(2L)
                 .setBook(book)
                 .setQuantity(booksQuantity);
     }
