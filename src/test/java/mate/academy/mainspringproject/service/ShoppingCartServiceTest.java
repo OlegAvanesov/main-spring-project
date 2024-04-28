@@ -90,11 +90,10 @@ class ShoppingCartServiceTest {
     @DisplayName("Verify addBookToCart(). Should add book to cart item ")
     void addBookToCart_ValidCartItemRequestDto_Success() {
         //Given
-        int bookQuantity = 5;
         shoppingCart.getCartItems().clear();
         CartItemRequestDto cartItemRequestDto = new CartItemRequestDto()
-                .setBookId(book.getId())
-                .setQuantity(bookQuantity);
+                .setBookId(cartItem.getBook().getId())
+                .setQuantity(cartItem.getQuantity());
         CartItemResponseDto expected = convertCartItemToCartItemResponseDto(cartItem);
 
         when(authentication.getPrincipal()).thenReturn(user);
@@ -164,7 +163,7 @@ class ShoppingCartServiceTest {
 
     private static User createUser() {
         return new User()
-                .setId(4L)
+                .setId(1L)
                 .setEmail("Bob@gmail.com")
                 .setPassword("1234567890")
                 .setFirstName("Bob")

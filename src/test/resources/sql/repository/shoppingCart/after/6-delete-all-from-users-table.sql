@@ -1,1 +1,1 @@
-delete from users where id = 4 and id = 5;
+delete from users;

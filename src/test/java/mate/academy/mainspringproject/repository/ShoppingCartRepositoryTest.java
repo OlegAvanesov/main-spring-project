@@ -27,7 +27,7 @@ class ShoppingCartRepositoryTest {
     @Test
     @DisplayName("Find shopping cart by its owner id")
     @Sql(scripts = {
-            "classpath:sql/repository/shoppingCart/before/1-add-two-users-to-users-table.sql",
+            "classpath:sql/repository/shoppingCart/before/1-add-user-to-users-table.sql",
             "classpath:sql/repository/shoppingCart/before/2-add-three-books-to-books-table.sql",
             "classpath:sql/repository/shoppingCart/before/3-add-category-to-categories-table.sql",
             "classpath:sql/repository/shoppingCart/before/4-add-category-to-book.sql",
@@ -62,7 +62,7 @@ class ShoppingCartRepositoryTest {
 
     private static User createUser() {
         return new User()
-                .setId(4L)
+                .setId(1L)
                 .setEmail("Bob@gmail.com")
                 .setPassword("1234567890")
                 .setFirstName("Bob")

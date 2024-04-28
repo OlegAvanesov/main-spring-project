@@ -2,9 +2,11 @@ package mate.academy.mainspringproject.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,26 +17,31 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.sql.DataSource;
 import lombok.SneakyThrows;
+import mate.academy.mainspringproject.dto.cartitem.CartItemRequestDto;
 import mate.academy.mainspringproject.dto.cartitem.CartItemResponseDto;
+import mate.academy.mainspringproject.dto.cartitem.CartItemUpdateRequestDto;
 import mate.academy.mainspringproject.dto.shoppingcart.ShoppingCartResponseDto;
 import mate.academy.mainspringproject.model.Book;
 import mate.academy.mainspringproject.model.CartItem;
 import mate.academy.mainspringproject.model.Category;
 import mate.academy.mainspringproject.model.ShoppingCart;
 import mate.academy.mainspringproject.model.User;
+import mate.academy.mainspringproject.service.shoppingcart.ShoppingCartService;
+import mate.academy.mainspringproject.service.user.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
-import org.mockito.Mockito;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -44,12 +51,21 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ShoppingCartControllerTest {
     private static MockMvc mockMvc;
+    @Mock
+    private UserService userService;
+    @Mock
+    private ShoppingCartService shoppingCartService;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private DataSource dataSource;
     @Autowired
     private WebApplicationContext applicationContext;
+    private User user;
+    private Book book;
+    private CartItem cartItem;
+    private ShoppingCart shoppingCart;
+//    private Authentication authentication;
 
     @BeforeAll
     public void beforeAll() {
@@ -77,7 +93,7 @@ class ShoppingCartControllerTest {
             ScriptUtils.executeSqlScript(
                     connection,
                     new ClassPathResource("sql/controller/shoppingCart/before/"
-                            + "1-add-two-users-to-users-table.sql")
+                            + "1-add-user-to-users-table.sql")
             );
             ScriptUtils.executeSqlScript(
                     connection,
@@ -105,6 +121,12 @@ class ShoppingCartControllerTest {
                             + "6-add-cartitem-to-cart_items-table.sql")
             );
         }
+
+        user = createUser();
+        book = createBook(createCategory());
+        cartItem = createCartItem(book);
+        shoppingCart = createShoppingCart(user, cartItem);
+//        authentication = mock(Authentication.class);
     }
 
     @SneakyThrows
@@ -147,22 +169,16 @@ class ShoppingCartControllerTest {
     @Test
     @DisplayName("Verify getAllInfoAboutCart(). "
             + "Should return all information about the shopping cart")
-    @WithMockUser(roles = "USER")
-    void getAllInfoAboutCart() throws Exception {
+//    @WithMockUser(username = "Tom", roles = {"USER"})
+    @WithUserDetails
+    void getAllInfoAboutCart_ValidParams_Success() throws Exception {
         //Given
-        User user = createUser();
-        Book book = createBook(createCategory());
-        CartItem cartItem = createCartItem(book);
-        ShoppingCart shoppingCart = createShoppingCart(user, cartItem);
-        Authentication authentication = Mockito.mock(Authentication.class);
-
         ShoppingCartResponseDto expected =
                 createShoppingCartResponseDto(shoppingCart, Set.of(cartItem));
-
-        when(authentication.getPrincipal()).thenReturn(user);
+//        when(authentication.getPrincipal()).thenReturn(user);
 
         //When
-        MvcResult result = mockMvc.perform(get("/api/cart/", authentication))
+        MvcResult result = mockMvc.perform(get("/api/cart/"))
                 .andExpect(status().isOk())
                 .andReturn();
 
@@ -176,45 +192,79 @@ class ShoppingCartControllerTest {
 
     @Test
     @DisplayName("Verify addBookToShoppingCart(). Should add a specific book to the shopping cart")
-    @WithMockUser(roles = "USER")
-    void addBookToShoppingCart() {
+    @WithMockUser(username = "Tom", roles = {"USER"})
+    void addBookToShoppingCart_ValidCartItemRequestDto_Success()
+            throws Exception {
         //Given
+        shoppingCart.getCartItems().clear();
+        CartItemRequestDto cartItemRequestDto = new CartItemRequestDto()
+                .setBookId(cartItem.getBook().getId())
+                .setQuantity(cartItem.getQuantity());
+
+        CartItemResponseDto expected = convertCartItemToCartItemResponseDto(cartItem);
+        String jsonRequest = objectMapper.writeValueAsString(cartItemRequestDto);
 
         //When
+        MvcResult result = mockMvc.perform(post("/api/cart/")
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(status().isOk())
+                .andReturn();
 
         //Then
-
+        CartItemResponseDto actual = objectMapper.readValue(
+                result.getResponse().getContentAsString(), CartItemResponseDto.class
+        );
+        assertNotNull(actual);
+        assertEquals(expected, actual);
     }
 
     @Test
     @DisplayName("Verify changeNumberOfBooks(). "
             + "Should change the quantity of a specific book in the shopping cart")
-    @WithMockUser(roles = "USER")
-    void changeNumberOfBooks() {
+    @WithMockUser(username = "Tom", roles = {"USER"})
+    void changeNumberOfBooks_ValidCartItemIdAndCartItemUpdateRequestDto_Success()
+            throws Exception {
         //Given
+        int updatedBooksQuantity = 10;
+        CartItemUpdateRequestDto cartItemUpdateRequestDto = new CartItemUpdateRequestDto();
+        cartItemUpdateRequestDto.setQuantity(updatedBooksQuantity);
+        cartItem.setQuantity(updatedBooksQuantity);
+
+        CartItemResponseDto expected = convertCartItemToCartItemResponseDto(cartItem);
+        String jsonRequest = objectMapper.writeValueAsString(cartItemUpdateRequestDto);
 
         //When
+        MvcResult result = mockMvc.perform(put(
+                        "/api/cart/cart-items/{cartItemId}", cartItem.getId())
+                        .content(jsonRequest)
+                        .contentType(MediaType.APPLICATION_JSON)
+                ).andExpect(status().isOk())
+                .andReturn();
 
         //Then
-
+        CartItemResponseDto actual = objectMapper.readValue(
+                result.getResponse().getContentAsString(), CartItemResponseDto.class
+        );
+        assertNotNull(actual);
+        assertEquals(expected, actual);
     }
 
     @Test
     @DisplayName("Verify deleteBookFromShoppingCart(). "
             + "Should delete a specific book from the shopping cart")
-    @WithMockUser(roles = "USER")
-    void deleteBookFromShoppingCart() {
-        //Given
-
-        //When
-
-        //Then
-
+    @WithMockUser(username = "Tom", roles = {"USER"})
+    void deleteBookFromShoppingCart_ValidCartItemId_Success() throws Exception {
+        mockMvc.perform(delete(
+                "/api/cart/cart-items/{cartItemId}", cartItem.getId())
+                )
+                .andExpect(status().isOk());
     }
 
     private static User createUser() {
         return new User()
-                .setId(4L)
+                .setId(1L)
                 .setEmail("Bob@gmail.com")
                 .setPassword("1234567890")
                 .setFirstName("Bob")
