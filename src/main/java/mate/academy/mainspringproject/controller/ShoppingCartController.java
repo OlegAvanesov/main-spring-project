@@ -1,6 +1,7 @@
 package mate.academy.mainspringproject.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(value = "/api/cart/")
 @RequiredArgsConstructor
 @Tag(name = "Shopping cart management", description = "Endpoints for managing shopping carts")
+@SecurityRequirement(name = "bearerAuth")
 public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
 
