@@ -44,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
         User userFromDb = userService.findById(authenticatedUser.getId());
         ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(userFromDb.getId());
 
-        updateOrder(order, requestDto, shoppingCart);
+        updateOrder(order, shoppingCart);
 
         shoppingCart.getCartItems().clear();
         shoppingCartRepository.save(shoppingCart);
@@ -88,11 +88,10 @@ public class OrderServiceImpl implements OrderService {
         order.setStatus(Order.Status.valueOf(status));
     }
 
-    private void updateOrder(Order order, OrderRequestDto requestDto, ShoppingCart shoppingCart) {
+    private void updateOrder(Order order, ShoppingCart shoppingCart) {
         order.setUser(shoppingCart.getUser());
         order.setStatus(Order.Status.PENDING);
         order.setOrderDate(LocalDateTime.now());
-        order.setShippingAddress(requestDto.getShippingAddress());
 
         List<OrderItem> orderItemList = shoppingCart.getCartItems().stream()
                 .map(cartItem -> convertCartItemToOrderItem(cartItem, order))

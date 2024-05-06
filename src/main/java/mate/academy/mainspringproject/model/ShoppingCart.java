@@ -20,11 +20,11 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Entity
-@Setter
-@Getter
 @Table(name = "shopping_carts")
-@SQLDelete(sql = "UPDATE shopping_carts SET is_deleted = TRUE WHERE id = ?")
-@SQLRestriction("is_deleted = FALSE")
+@Getter
+@Setter
+@SQLDelete(sql = "UPDATE shopping_carts SET is_deleted = true WHERE id = ?")
+@SQLRestriction("is_deleted = false")
 @Accessors(chain = true)
 public class ShoppingCart {
     @Id

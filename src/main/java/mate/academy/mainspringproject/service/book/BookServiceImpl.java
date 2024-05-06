@@ -1,6 +1,5 @@
 package mate.academy.mainspringproject.service.book;
 
-import java.util.HashSet;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import mate.academy.mainspringproject.dto.book.BookDto;
@@ -10,7 +9,6 @@ import mate.academy.mainspringproject.dto.book.CreateBookRequestDto;
 import mate.academy.mainspringproject.exception.EntityNotFoundException;
 import mate.academy.mainspringproject.mappers.BookMapper;
 import mate.academy.mainspringproject.model.Book;
-import mate.academy.mainspringproject.model.Category;
 import mate.academy.mainspringproject.repository.SpecificationBuilder;
 import mate.academy.mainspringproject.repository.book.BookRepository;
 import mate.academy.mainspringproject.repository.category.CategoryRepository;
@@ -32,8 +30,6 @@ public class BookServiceImpl implements BookService {
     @Transactional
     public BookDto save(CreateBookRequestDto requestDto) {
         Book book = bookMapper.toModel(requestDto);
-        List<Category> categories = categoryRepository.findAllById(requestDto.getCategoryIds());
-        book.setCategories(new HashSet<>(categories));
         return bookMapper.toDto(bookRepository.save(book));
     }
 
@@ -66,8 +62,6 @@ public class BookServiceImpl implements BookService {
         }
         Book book = bookMapper.toModel(requestDto);
         book.setId(id);
-        List<Category> categories = categoryRepository.findAllById(requestDto.getCategoryIds());
-        book.setCategories(new HashSet<>(categories));
         return bookMapper.toDto(bookRepository.save(book));
     }
 

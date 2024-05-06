@@ -1,8 +1,9 @@
 package mate.academy.mainspringproject.dto.book;
 
 import jakarta.persistence.Column;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 import java.util.Set;
 import javax.validation.constraints.NotEmpty;
@@ -12,15 +13,14 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class CreateBookRequestDto {
-    @NotEmpty
+    @NotBlank
     private String title;
-    @NotEmpty
+    @NotBlank
     private String author;
     @Column(nullable = false, unique = true)
     @Pattern(regexp = "[\\d\\-]+", message = "You can use only numbers and dash")
     private String isbn;
-    @NotEmpty
-    @Min(0)
+    @Positive
     private BigDecimal price;
     private String description;
     private String coverImage;

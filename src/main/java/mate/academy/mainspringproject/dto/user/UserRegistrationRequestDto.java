@@ -1,28 +1,27 @@
 package mate.academy.mainspringproject.dto.user;
 
-import jakarta.persistence.Column;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import mate.academy.mainspringproject.validation.FieldMatch;
+import mate.academy.mainspringproject.validation.PasswordMatch;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-@FieldMatch(first = "password", second = "repeatPassword", message = "Passwords should match")
+@PasswordMatch
 public class UserRegistrationRequestDto {
-    @Column(nullable = false, unique = true)
+    @NotBlank
     @Email
     private String email;
-    @NotNull
+    @NotBlank
     @Length(min = 8, max = 20)
     private String password;
-    @NotNull
+    @NotBlank
     @Length(min = 8, max = 20)
     private String repeatPassword;
-    @NotNull
+    @NotBlank
     private String firstName;
-    @NotNull
+    @NotBlank
     private String lastName;
-    @NotNull
+    @NotBlank
     private String shippingAddress;
 }

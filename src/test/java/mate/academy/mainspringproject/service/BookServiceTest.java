@@ -3,7 +3,6 @@ package mate.academy.mainspringproject.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -11,7 +10,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -134,7 +132,6 @@ class BookServiceTest {
         BookDto expected = convertBookToBookDto(book, categoryIds);
 
         when(bookMapper.toModel(requestDto)).thenReturn(book);
-        when(categoryRepository.findAllById(anySet())).thenReturn(new ArrayList<>(categories));
         when(bookRepository.save(book)).thenReturn(book);
         when(bookMapper.toDto(book)).thenReturn(expected);
 
@@ -164,7 +161,6 @@ class BookServiceTest {
 
         when(bookRepository.existsById(id)).thenReturn(true);
         when(bookMapper.toModel(requestDto)).thenReturn(updatedBook);
-        when(categoryRepository.findAllById(anySet())).thenReturn(categories);
         when(bookRepository.save(updatedBook)).thenReturn(updatedBook);
         when(bookMapper.toDto(updatedBook)).thenReturn(expected);
 

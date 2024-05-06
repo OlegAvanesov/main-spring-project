@@ -5,9 +5,7 @@ import mate.academy.mainspringproject.dto.cartitem.CartItemRequestDto;
 import mate.academy.mainspringproject.dto.cartitem.CartItemResponseDto;
 import mate.academy.mainspringproject.dto.cartitem.CartItemUpdateRequestDto;
 import mate.academy.mainspringproject.dto.shoppingcart.ShoppingCartResponseDto;
-import mate.academy.mainspringproject.exception.EntityNotFoundException;
 import mate.academy.mainspringproject.mappers.ShoppingCartMapper;
-import mate.academy.mainspringproject.model.CartItem;
 import mate.academy.mainspringproject.model.ShoppingCart;
 import mate.academy.mainspringproject.model.User;
 import mate.academy.mainspringproject.repository.shoppingcart.ShoppingCartRepository;
@@ -30,12 +28,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         User authenticatedUser = (User) authentication.getPrincipal();
         User user = userService.findById(authenticatedUser.getId());
         ShoppingCart shoppingCart = shoppingCartRepository.findByUserId(user.getId());
-
-        ShoppingCartResponseDto shoppingCartResponseDto = shoppingCartMapper.toDto(shoppingCart);
-        shoppingCartResponseDto.setUserId(user.getId());
-        shoppingCart.getCartItems().forEach(cartItem ->
-                setBookIdAndBookTitle(shoppingCartResponseDto, cartItem));
-        return shoppingCartResponseDto;
+        return shoppingCartMapper.toDto(shoppingCart);
     }
 
     @Override
@@ -70,19 +63,5 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
         shoppingCart.getCartItems().removeIf(cartItem -> cartItem.getId().equals(id));
         shoppingCartRepository.save(shoppingCart);
         cartItemService.delete(id);
-    }
-
-    private void setBookIdAndBookTitle(
-            ShoppingCartResponseDto shoppingCartResponseDto, CartItem cartItem
-    ) {
-        CartItemResponseDto cartItemResponseDto = shoppingCartResponseDto.getCartItems().stream()
-                .filter(cartItemDto -> cartItemDto.getId().equals(cartItem.getId()))
-                .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Can't find cartItemResponseDto with id: " + cartItem.getId())
-                );
-
-        cartItemResponseDto.setBookId(cartItem.getBook().getId());
-        cartItemResponseDto.setBookTitle(cartItem.getBook().getTitle());
     }
 }

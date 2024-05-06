@@ -36,11 +36,7 @@ public class CartItemServiceImpl implements CartItemService {
         cartItemRepository.save(cartItem);
         shoppingCart.getCartItems().add(cartItem);
         shoppingCartRepository.save(shoppingCart);
-
-        CartItemResponseDto cartItemResponseDto = cartItemMapper.toDto(cartItem);
-        cartItemResponseDto.setBookId(book.getId());
-        cartItemResponseDto.setBookTitle(book.getTitle());
-        return cartItemResponseDto;
+        return cartItemMapper.toDto(cartItem);
     }
 
     @Override
@@ -51,10 +47,7 @@ public class CartItemServiceImpl implements CartItemService {
         );
         cartItem.setQuantity(requestDto.getQuantity());
         cartItemRepository.save(cartItem);
-        CartItemResponseDto cartItemResponseDto = cartItemMapper.toDto(cartItem);
-        cartItemResponseDto.setBookId(cartItem.getBook().getId());
-        cartItemResponseDto.setBookTitle(cartItem.getBook().getTitle());
-        return cartItemResponseDto;
+        return cartItemMapper.toDto(cartItem);
     }
 
     @Override

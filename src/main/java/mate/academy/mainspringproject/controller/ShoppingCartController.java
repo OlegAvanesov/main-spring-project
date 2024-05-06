@@ -21,24 +21,24 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Shopping cart management", description = "Endpoints for managing shopping carts")
 @RestController
 @RequestMapping(value = "/api/cart/")
-@RequiredArgsConstructor
-@Tag(name = "Shopping cart management", description = "Endpoints for managing shopping carts")
 @SecurityRequirement(name = "bearerAuth")
+@RequiredArgsConstructor
 public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
 
-    @GetMapping
     @PreAuthorize("hasRole('ROLE_USER')")
+    @GetMapping
     @Operation(summary = "Get information about shopping cart",
             description = "Get detailed information about the contents of user's shopping cart")
     public ShoppingCartResponseDto getAllInfoAboutCart(Authentication authentication) {
         return shoppingCartService.getAllInfo(authentication);
     }
 
-    @PostMapping
     @PreAuthorize("hasRole('ROLE_USER')")
+    @PostMapping
     @Operation(summary = "Add book to shopping cart",
             description = "Add a book and indicate its quantity to the shopping cart")
     public CartItemResponseDto addBookToShoppingCart(
@@ -47,8 +47,8 @@ public class ShoppingCartController {
         return shoppingCartService.addBookToCart(requestDto, authentication);
     }
 
-    @PutMapping("/cart-items/{cartItemId}")
     @PreAuthorize("hasRole('ROLE_USER')")
+    @PutMapping("/cart-items/{cartItemId}")
     @Operation(summary = "Change number of books",
             description = "Change the number of a specific book in the shopping cart")
     public CartItemResponseDto changeNumberOfBooks(
@@ -58,8 +58,8 @@ public class ShoppingCartController {
         return shoppingCartService.updateBooksQuantity(requestDto, id);
     }
 
-    @DeleteMapping("/cart-items/{cartItemId}")
     @PreAuthorize("hasRole('ROLE_USER')")
+    @DeleteMapping("/cart-items/{cartItemId}")
     @Operation(summary = "Remove a specific item",
             description = "Remove a specific item from shopping cart")
     public void deleteBookFromShoppingCart(

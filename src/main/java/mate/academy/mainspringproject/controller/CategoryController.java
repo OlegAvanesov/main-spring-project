@@ -24,23 +24,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "Category management", description = "Endpoints for managing categories")
 @RestController
 @RequestMapping("/api/categories")
 @RequiredArgsConstructor
-@Tag(name = "Category management", description = "Endpoints for managing categories")
 @SecurityRequirement(name = "bearerAuth")
 public class CategoryController {
     private final CategoryService categoryService;
     private final BookService bookService;
 
-    @PostMapping
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a new category", description = "Create a new category")
     public CategoryResponseDto createCategory(@RequestBody @Valid CategoryRequestDto requestDto) {
         return categoryService.save(requestDto);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping
     @Operation(summary = "Get all categories",
             description = "Get a list of all available categories"
@@ -49,14 +50,15 @@ public class CategoryController {
         return categoryService.findAll(pageable);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}")
     @Operation(summary = "Get category by id", description = "Get available category by it's id")
     public CategoryResponseDto getCategoryById(@PathVariable Long id) {
         return categoryService.getById(id);
     }
 
-    @PutMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PutMapping("/{id}")
     @Operation(summary = "Update category",
             description = "Update information about available category by it's id")
     public CategoryResponseDto updateCategory(
@@ -65,14 +67,15 @@ public class CategoryController {
         return categoryService.update(id, categoryDto);
     }
 
-    @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete category", description = "Delete available category by it's id")
     public void deleteCategory(@PathVariable Long id) {
         categoryService.deleteById(id);
     }
 
+    @PreAuthorize("hasRole('USER')")
     @GetMapping("/{id}/books")
     @Operation(summary = "Get books by category",
             description = "Get available books by category ID")
