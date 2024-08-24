@@ -30,8 +30,8 @@ public class ShoppingCart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @JoinColumn(nullable = false)
     @OneToOne
+    @JoinColumn(nullable = false)
     private User user;
     @OneToMany (mappedBy = "shoppingCart", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude

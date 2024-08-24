@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   mysqldb:
     image: mysql:8.0.33
     container_name: mysqldb
     restart: unless-stopped
     env_file:
-      - .env.template
+      - ./.env
     environment:
       - MYSQL_DATABASE=$MYSQLDB_DATABASE
       - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
@@ -24,7 +22,7 @@ services:
     image: book-store-service
     container_name: app
     build: .
-    env_file: .env.template
+    env_file: ./.env
     ports:
       - $SPRING_LOCAL_PORT:$SPRING_DOCKER_PORT
       - $DEBUG_PORT:$DEBUG_PORT
